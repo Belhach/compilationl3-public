@@ -41,17 +41,17 @@ public class Sa2ts extends SaDepthFirstVisitor{
     {
         defaultIn(node);
         if(State == GLOBAL) {
-            if (varExists(node.getNom(), Global_Table))
+            if (var_Existe(node.getNom(), Global_Table))
                 throw new RuntimeException("cette variable a deja été déclaré");
             node.tsItem = Global_Table.addVar(node.getNom(), 1);
         }
         if(State == PARAMETRE) {
-            if (varExists(node.getNom(), Local_Tables))
+            if (var_Existe(node.getNom(), Local_Tables))
                 throw new RuntimeException("cette variable a deja été déclaré");
             node.tsItem = Local_Tables.addParam(node.getNom());
         }
         if(State == VARIABLE) {
-            if (varExists(node.getNom(), Global_Table))
+            if (var_Existe(node.getNom(), Global_Table))
                 throw new RuntimeException("cette variable a deja été déclaré");
             node.tsItem = Local_Tables.addVar(node.getNom(), 1);
         }
@@ -64,7 +64,7 @@ public class Sa2ts extends SaDepthFirstVisitor{
         if (State != GLOBAL) throw new RuntimeException("le tableau doit etre declaré dans la table global");
         String nom = node.getNom();
         int taille = node.getTaille();
-        if(varExists(nom, Global_Table)) throw new RuntimeException("Cette variable existe deja");
+        if(var_Existe(nom, Global_Table)) throw new RuntimeException("Cette variable existe deja");
         if (taille < 2) throw new RuntimeException("la taille du tableau doit etre superieur à 1");
         else node.tsItem = Global_Table.addVar(nom,taille);
         defaultOut(node);
@@ -83,7 +83,7 @@ public class Sa2ts extends SaDepthFirstVisitor{
             nbr_args = node.getParametres().length();
         }
         State = GLOBAL;
-        if (FncExists(node.getNom())) throw new RuntimeException("la fonction a deja ete declaré");
+        if (Fnc_Existe(node.getNom())) throw new RuntimeException("la fonction a deja ete declaré");
         State = PARAMETRE;
         if (node.getParametres() != null) node.getParametres().accept(this);
         State = VARIABLE;
@@ -99,7 +99,7 @@ public class Sa2ts extends SaDepthFirstVisitor{
     public Void visit(SaVarSimple node)
     {
         defaultIn(node);
-        if(!varExists(node.getNom(), Local_Tables) && !varExists(node.getNom(), Global_Table)){
+        if(!var_Existe(node.getNom(), Local_Tables) && !var_Existe(node.getNom(), Global_Table)){
             throw new RuntimeException("cette variable n'as pas été déclaré");
         }
         TsItemVar tsItemVar;
@@ -118,8 +118,8 @@ public class Sa2ts extends SaDepthFirstVisitor{
     {
         defaultIn(node);
         String nom = node.getNom();
-        if(varExists(nom, Local_Tables)) throw new RuntimeException(nom + "est une variable local");
-        if(!varExists(nom, Global_Table)) throw new RuntimeException(nom + "n'as pas été déclaré");
+        if(var_Existe(nom, Local_Tables)) throw new RuntimeException(nom + "est une variable local");
+        if(!var_Existe(nom, Global_Table)) throw new RuntimeException(nom + "n'as pas été déclaré");
         node.tsItem = Global_Table.getVar(nom);
         defaultOut(node);
         return null;
@@ -133,18 +133,18 @@ public class Sa2ts extends SaDepthFirstVisitor{
         if(node.getArguments() == null) nbr_args = 0;
         else nbr_args = node.getArguments().length();
         TsItemFct tsItemFct = Global_Table.getFct(nom);
-        if(!FncExists(nom)) throw new RuntimeException("cette fonction n'existe pas");
+        if(!Fnc_Existe(nom)) throw new RuntimeException("cette fonction n'existe pas");
         if(nbr_args != tsItemFct.nbArgs) throw new RuntimeException("le nombre d'argument n'est pas celui attendu");
         node.tsItem = tsItemFct;
         defaultOut(node);
         return null;
     }
 
-    private boolean varExists(String nom, Ts table) {
+    private boolean var_Existe(String nom, Ts table) {
         return table.getVar(nom) != null;
     }
 
-    private boolean FncExists(String nom) {
+    private boolean Fnc_Existe(String nom) {
         return Global_Table.getFct(nom) != null;
     }
 
