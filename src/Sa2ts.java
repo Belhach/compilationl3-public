@@ -62,9 +62,11 @@ public class Sa2ts extends SaDepthFirstVisitor{
 
     public Void visit(SaDecTab node){
         defaultIn(node);
+        if (State != GLOBAL) throw new RuntimeException("le tableau doit etre declaré dans la table global");
         String nom = node.getNom();
         int taille = node.getTaille();
-        if(varExists(nom, Global_Table)){ throw new RuntimeException("Cette variable existe deja");}
+        if(varExists(nom, Global_Table)) throw new RuntimeException("Cette variable existe deja");
+        if (taille < 2) throw new RuntimeException("la taille du tableau doit etre superieur à 1");
         else node.tsItem = Global_Table.addVar(nom,taille);
         defaultOut(node);
         return null;
@@ -100,7 +102,6 @@ public class Sa2ts extends SaDepthFirstVisitor{
         } else {
             tsItemVar = Local_Tables.getVar(node.getNom());
         }
-
         node.tsItem = tsItemVar;
         defaultOut(node);
         return null;
@@ -112,7 +113,7 @@ public class Sa2ts extends SaDepthFirstVisitor{
         defaultIn(node);
         String nom = node.getNom();
         if(varExists(nom, Local_Tables)) throw new RuntimeException(nom + "est une variable local");
-        if(varExists(nom, Global_Table)) throw new RuntimeException(nom + "n'as pas été déclaré");
+        if(!varExists(nom, Global_Table)) throw new RuntimeException(nom + "n'as pas été déclaré");
         node.tsItem = Global_Table.getVar(nom);
         defaultOut(node);
         return null;
@@ -123,7 +124,7 @@ public class Sa2ts extends SaDepthFirstVisitor{
         defaultIn(node);
         String nom = node.getNom();
         int nbr_args;
-        if(node.getArguments() != null) nbr_args = 0;
+        if(node.getArguments() == null) nbr_args = 0;
         else nbr_args = node.getArguments().length();
         TsItemFct tsItemFct = Global_Table.getFct(nom);
         if(!FncExists(nom)) throw new RuntimeException("cette fonction n'existe pas");
