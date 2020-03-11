@@ -6,12 +6,17 @@ import ts.TsItemVar;
 public class Sa2ts extends SaDepthFirstVisitor{
     private Ts Global_Table ;
     private Ts Local_Tables;
+    private boolean isGlobal;
     private boolean isParam;
+    private boolean isVariable;
     private int indentation = 0;
 
     public Sa2ts(SaNode root){
         Global_Table = new Ts();
         root.accept(this);
+        isGlobal = true;
+        isParam = false;
+        isVariable = false;
     }
 
     public void defaultIn(SaNode node)
@@ -35,6 +40,25 @@ public class Sa2ts extends SaDepthFirstVisitor{
     public Void visit(SaDecVar node)
     {
         defaultIn(node);
+        if(isGlobal) {
+            if (Global_Table.variables.containsKey(node.getNom()))
+                throw new RuntimeException("cette variable a deja été déclaré");
+            node.tsItem = Global_Table.addVar(node.getNom(), 1);
+        }
+        isParam = true;
+        if(isParam) {
+            if (Local_Tables.variables.containsKey(node.getNom()))
+                throw new RuntimeException("cette variable a deja été déclaré");
+            node.tsItem = Local_Tables.addVar(node.getNom(), 1);
+        }
+        isVariable = true;
+        if(isVariable) {
+            if (Local_Tables.variables.containsKey(node.getNom()))
+                throw new RuntimeException("cette variable a deja été déclaré");
+            node.tsItem = Local_Tables.addVar(node.getNom(), 1);
+        }
+        isParam = false;
+        isVariable = false;
         defaultOut(node);
         return null;
     }
@@ -44,7 +68,7 @@ public class Sa2ts extends SaDepthFirstVisitor{
         String nom = node.getNom();
         int taille = node.getTaille();
         if(Global_Table.variables.containsKey(nom)){ throw new RuntimeException("Cette variable existe deja");}
-        node.tsItem = Global_Table.addVar(nom,taille);
+        else node.tsItem = Global_Table.addVar(nom,taille);
         defaultOut(node);
         return null;
     }
@@ -68,7 +92,7 @@ public class Sa2ts extends SaDepthFirstVisitor{
     public Void visit(SaVarSimple node)
     {
         defaultIn(node);
-        
+
         defaultOut(node);
         return null;
     }
