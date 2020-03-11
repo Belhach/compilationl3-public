@@ -74,16 +74,21 @@ public class Sa2ts extends SaDepthFirstVisitor{
 
     public Void visit(SaDecFonc node){
         defaultIn(node);
-        Local_Tables = new Ts();
-        String nom = node.getNom();
+        Ts new_local_table = new Ts();
+        Local_Tables = new_local_table;
         int nbr_args;
-        if(node.getParametres() == null) nbr_args = 0;
-        else nbr_args = node.getParametres().length();
+        if(node.getParametres() == null) {
+            nbr_args = 0;
+        }
+        else {
+            nbr_args = node.getParametres().length();
+        }
+        if (FncExists(node.getNom())) throw new RuntimeException("la fonction a deja ete declaré");
         if (node.getParametres() != null) node.getParametres().accept(this);
         if (node.getVariable() != null) node.getVariable().accept(this);
         if (node.getCorps() != null) node.getCorps().accept(this);
         Local_Tables = Global_Table.getTableLocale(node.getNom());
-        node.tsItem = Global_Table.addFct(nom,nbr_args,Local_Tables,node);
+        node.tsItem = Global_Table.addFct(node.getNom(),nbr_args,new_local_table,node);
         State = GLOBAL;
         defaultOut(node);
         return null;
