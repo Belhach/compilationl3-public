@@ -3,7 +3,7 @@ import sc.lexer.*;
 import sc.node.*;
 import java.io.*;
 import sa.*;
-//import ts.*;
+import ts.*;
 //import c3a.*;
 //import nasm.*;
 //import fg.*;
