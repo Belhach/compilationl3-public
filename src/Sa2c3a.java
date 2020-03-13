@@ -8,6 +8,12 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
     private Ts TsTable;
     private int indentation = 0;
 
+    public Sa2c3a(SaNode root,Ts TsTable){
+        c3a = new C3a();
+        this.TsTable = TsTable;
+        root.accept(this);
+    }
+
     @Override
     public void defaultIn(SaNode node)
     {
