@@ -5,19 +5,19 @@ import ts.TsItemVar;
 
 public class Sa2ts extends SaDepthFirstVisitor<Void>{
     private Ts Global_Table ;
-    private Ts Local_Tables;
+    private Ts current_Local_Tables;
 
     public static final String GLOBAL = "GLOBAL";
     public static final String PARAMETRE = "PARAMETRE";
     public static final String VARIABLE = "VARIABLE";
-    public String State = GLOBAL;
+    public String State;
 
     private int indentation = 0;
 
     public Sa2ts(SaNode root){
         Global_Table = new Ts();
-        root.accept(this);
         State = GLOBAL;
+        root.accept(this);
     }
 
     public void defaultIn(SaNode node)
@@ -49,14 +49,14 @@ public class Sa2ts extends SaDepthFirstVisitor<Void>{
             node.tsItem = Global_Table.addVar(node.getNom(), 1);
         }
         if(State == PARAMETRE) {
-            if (var_Existe(node.getNom(), Local_Tables))
+            if (var_Existe(node.getNom(), current_Local_Tables))
                 throw new RuntimeException("cette variable a deja été déclaré");
-            node.tsItem = Local_Tables.addParam(node.getNom());
+            node.tsItem = current_Local_Tables.addParam(node.getNom());
         }
         if(State == VARIABLE) {
-            if (var_Existe(node.getNom(), Local_Tables))
+            if (var_Existe(node.getNom(), current_Local_Tables))
                 throw new RuntimeException("cette variable a deja été déclaré");
-            node.tsItem = Local_Tables.addVar(node.getNom(), 1);
+            node.tsItem = current_Local_Tables.addVar(node.getNom(), 1);
         }
         defaultOut(node);
         return null;
@@ -79,7 +79,7 @@ public class Sa2ts extends SaDepthFirstVisitor<Void>{
     public Void visit(SaDecFonc node){
         defaultIn(node);
         Ts new_local_table = new Ts();
-        Local_Tables = new_local_table;
+        current_Local_Tables = new_local_table;
         int nbr_args;
         if(node.getParametres() == null) {
             nbr_args = 0;
@@ -95,7 +95,7 @@ public class Sa2ts extends SaDepthFirstVisitor<Void>{
         if (node.getVariable() != null) node.getVariable().accept(this);
         if (node.getCorps() != null) node.getCorps().accept(this);
         State = GLOBAL;
-        Local_Tables = Global_Table.getTableLocale(node.getNom());
+        current_Local_Tables = Global_Table.getTableLocale(node.getNom());
         node.tsItem = Global_Table.addFct(node.getNom(),nbr_args,new_local_table,node);
         defaultOut(node);
         return null;
@@ -105,14 +105,14 @@ public class Sa2ts extends SaDepthFirstVisitor<Void>{
     public Void visit(SaVarSimple node)
     {
         defaultIn(node);
-        if(!var_Existe(node.getNom(), Local_Tables) && !var_Existe(node.getNom(), Global_Table)){
+        if(!var_Existe(node.getNom(), current_Local_Tables) && !var_Existe(node.getNom(), Global_Table)){
             throw new RuntimeException("cette variable n'as pas été déclaré");
         }
         TsItemVar tsItemVar;
         if (State == GLOBAL) {
             tsItemVar = Global_Table.getVar(node.getNom());
         } else {
-            tsItemVar = Local_Tables.getVar(node.getNom());
+            tsItemVar = current_Local_Tables.getVar(node.getNom());
         }
         node.tsItem = tsItemVar;
         defaultOut(node);
@@ -124,7 +124,7 @@ public class Sa2ts extends SaDepthFirstVisitor<Void>{
     {
         defaultIn(node);
         String nom = node.getNom();
-        if(var_Existe(nom, Local_Tables)) throw new RuntimeException(nom + "est une variable local");
+        if(var_Existe(nom, current_Local_Tables)) throw new RuntimeException(nom + "est une variable local");
         if(!var_Existe(nom, Global_Table)) throw new RuntimeException(nom + "n'as pas été déclaré");
         node.tsItem = Global_Table.getVar(nom);
         defaultOut(node);

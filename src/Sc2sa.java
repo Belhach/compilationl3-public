@@ -6,6 +6,7 @@ public class Sc2sa extends DepthFirstAdapter {
 
     private SaNode returnValue;
     private int indentation = 0;
+
     @Override
     public void defaultIn(Node node) {
         for(int i = 0 ; i < indentation ; i++){
