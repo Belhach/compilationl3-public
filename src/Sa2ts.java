@@ -3,20 +3,21 @@ import ts.Ts;
 import ts.TsItemFct;
 import ts.TsItemVar;
 
-public class Sa2ts extends SaDepthFirstVisitor{
+public class Sa2ts extends SaDepthFirstVisitor<Void>{
     private Ts Global_Table ;
     private Ts Local_Tables;
+
     public static final String GLOBAL = "GLOBAL";
     public static final String PARAMETRE = "PARAMETRE";
     public static final String VARIABLE = "VARIABLE";
-    public String State;
+    public String State = GLOBAL;
 
     private int indentation = 0;
 
     public Sa2ts(SaNode root){
         Global_Table = new Ts();
-        State = GLOBAL;
         root.accept(this);
+        State = GLOBAL;
     }
 
     public void defaultIn(SaNode node)
@@ -37,9 +38,11 @@ public class Sa2ts extends SaDepthFirstVisitor{
         System.out.println("</"+node.getClass().getSimpleName()+">");
     }
 
+    @Override
     public Void visit(SaDecVar node)
     {
         defaultIn(node);
+
         if(State == GLOBAL) {
             if (var_Existe(node.getNom(), Global_Table))
                 throw new RuntimeException("cette variable a deja été déclaré");
@@ -51,7 +54,7 @@ public class Sa2ts extends SaDepthFirstVisitor{
             node.tsItem = Local_Tables.addParam(node.getNom());
         }
         if(State == VARIABLE) {
-            if (var_Existe(node.getNom(), Global_Table))
+            if (var_Existe(node.getNom(), Local_Tables))
                 throw new RuntimeException("cette variable a deja été déclaré");
             node.tsItem = Local_Tables.addVar(node.getNom(), 1);
         }
@@ -59,6 +62,7 @@ public class Sa2ts extends SaDepthFirstVisitor{
         return null;
     }
 
+    @Override
     public Void visit(SaDecTab node){
         defaultIn(node);
         if (State != GLOBAL) throw new RuntimeException("le tableau doit etre declaré dans la table global");
@@ -71,6 +75,7 @@ public class Sa2ts extends SaDepthFirstVisitor{
         return null;
     }
 
+    @Override
     public Void visit(SaDecFonc node){
         defaultIn(node);
         Ts new_local_table = new Ts();
@@ -96,6 +101,7 @@ public class Sa2ts extends SaDepthFirstVisitor{
         return null;
     }
 
+    @Override
     public Void visit(SaVarSimple node)
     {
         defaultIn(node);
@@ -113,7 +119,7 @@ public class Sa2ts extends SaDepthFirstVisitor{
         return null;
     }
 
-
+    @Override
     public Void visit(SaVarIndicee node)
     {
         defaultIn(node);
@@ -125,6 +131,7 @@ public class Sa2ts extends SaDepthFirstVisitor{
         return null;
     }
 
+    @Override
     public Void visit(SaAppel node)
     {
         defaultIn(node);
@@ -140,11 +147,11 @@ public class Sa2ts extends SaDepthFirstVisitor{
         return null;
     }
 
-    private boolean var_Existe(String nom, Ts table) {
+    public boolean var_Existe(String nom, Ts table) {
         return table.getVar(nom) != null;
     }
 
-    private boolean Fnc_Existe(String nom) {
+    public boolean Fnc_Existe(String nom) {
         return Global_Table.getFct(nom) != null;
     }
 
