@@ -1,7 +1,4 @@
-import c3a.C3a;
-import c3a.C3aInstAdd;
-import c3a.C3aOperand;
-import c3a.C3aTemp;
+import c3a.*;
 import sa.*;
 import ts.Ts;
 
@@ -143,35 +140,77 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
         if(op2 != null){
             operand2 = op2.accept(this);
         }
-        C3aTemp temp = c3a.newTemp();
+        C3aOperand temp = c3a.newTemp();
 
         c3a.ajouteInst(new C3aInstAdd(operand1,operand2,temp,""));
         defaultOut(node);
-        return null;
+        return temp;
     }
 
     @Override
     public C3aOperand visit(SaExpSub node)
     {
         defaultIn(node);
+        SaExp op1 = node.getOp1();
+        SaExp op2 = node.getOp2();
+        C3aOperand operand1 = null;
+        C3aOperand operand2 = null;
+        if(op1 != null){
+            operand1 = op1.accept(this);
+        }
+        if(op2 != null){
+            operand2 = op2.accept(this);
+        }
+        C3aOperand temp = c3a.newTemp();
+
+        c3a.ajouteInst(new C3aInstSub(operand1,operand2,temp,""));
         defaultOut(node);
-        return null;
+        defaultOut(node);
+        return temp;
     }
 
     @Override
     public C3aOperand visit(SaExpMult node)
     {
         defaultIn(node);
+        SaExp op1 = node.getOp1();
+        SaExp op2 = node.getOp2();
+        C3aOperand operand1 = null;
+        C3aOperand operand2 = null;
+        if(op1 != null){
+            operand1 = op1.accept(this);
+        }
+        if(op2 != null){
+            operand2 = op2.accept(this);
+        }
+        C3aOperand temp = c3a.newTemp();
+
+        c3a.ajouteInst(new C3aInstMult(operand1,operand2,temp,""));
         defaultOut(node);
-        return null;
+        defaultOut(node);
+        return temp;
     }
 
     @Override
     public C3aOperand visit(SaExpDiv node)
     {
         defaultIn(node);
+        SaExp op1 = node.getOp1();
+        SaExp op2 = node.getOp2();
+        C3aOperand operand1 = null;
+        C3aOperand operand2 = null;
+        if(op1 != null){
+            operand1 = op1.accept(this);
+        }
+        if(op2 != null){
+            operand2 = op2.accept(this);
+        }
+        C3aOperand temp = c3a.newTemp();
+
+        c3a.ajouteInst(new C3aInstDiv(operand1,operand2,temp,""));
         defaultOut(node);
-        return null;
+        defaultOut(node);
+        return temp;
     }
 
     @Override
