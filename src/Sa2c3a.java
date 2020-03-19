@@ -59,6 +59,9 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
     public C3aOperand visit(SaInstTantQue node)
     {
         defaultIn(node);
+        C3aLabel new_label = c3a.newAutoLabel();
+        c3a.addLabelToNextInst(new_label);
+        //c3a.ajouteInst(new C3aInstJumpIfEqual(,,""));
         defaultOut(node);
         return null;
     }
