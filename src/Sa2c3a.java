@@ -37,8 +37,9 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
     public C3aOperand visit(SaExpInt node)
     {
         defaultIn(node);
+        C3aConstant var = new C3aConstant(node.getVal());
         defaultOut(node);
-        return null;
+        return var;
     }
 
     @Override
@@ -140,7 +141,7 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
         if(op2 != null){
             operand2 = op2.accept(this);
         }
-        C3aOperand temp = c3a.newTemp();
+        C3aTemp temp = c3a.newTemp();
 
         c3a.ajouteInst(new C3aInstAdd(operand1,operand2,temp,""));
         defaultOut(node);
@@ -161,7 +162,7 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
         if(op2 != null){
             operand2 = op2.accept(this);
         }
-        C3aOperand temp = c3a.newTemp();
+        C3aTemp temp = c3a.newTemp();
 
         c3a.ajouteInst(new C3aInstSub(operand1,operand2,temp,""));
         defaultOut(node);
@@ -183,7 +184,7 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
         if(op2 != null){
             operand2 = op2.accept(this);
         }
-        C3aOperand temp = c3a.newTemp();
+        C3aTemp temp = c3a.newTemp();
 
         c3a.ajouteInst(new C3aInstMult(operand1,operand2,temp,""));
         defaultOut(node);
@@ -205,7 +206,7 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
         if(op2 != null){
             operand2 = op2.accept(this);
         }
-        C3aOperand temp = c3a.newTemp();
+        C3aTemp temp = c3a.newTemp();
 
         c3a.ajouteInst(new C3aInstDiv(operand1,operand2,temp,""));
         defaultOut(node);
