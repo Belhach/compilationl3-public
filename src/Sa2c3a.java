@@ -1,5 +1,7 @@
 import c3a.C3a;
+import c3a.C3aInstAdd;
 import c3a.C3aOperand;
+import c3a.C3aTemp;
 import sa.*;
 import ts.Ts;
 
@@ -35,29 +37,6 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
     }
 
     @Override
-    public C3aOperand visit(SaProg node)
-    {
-        defaultIn(node);
-        defaultOut(node);
-        return null;
-    }
-
-    @Override
-    public C3aOperand visit(SaDecTab node){
-        defaultIn(node);
-        defaultOut(node);
-        return null;
-    }
-
-    @Override
-    public C3aOperand visit(SaExp node)
-    {
-        defaultIn(node);
-        defaultOut(node);
-        return null;
-    }
-
-    @Override
     public C3aOperand visit(SaExpInt node)
     {
         defaultIn(node);
@@ -69,16 +48,13 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
     public C3aOperand visit(SaExpVar node)
     {
         defaultIn(node);
+        SaVar var = node.getVar();
+        C3aOperand operand = null;
+        if(var != null){
+            operand = var.accept(this);
+        }
         defaultOut(node);
-        return null;
-    }
-
-    @Override
-    public C3aOperand visit(SaInstEcriture node)
-    {
-        defaultIn(node);
-        defaultOut(node);
-        return null;
+        return operand;
     }
 
     @Override
@@ -157,6 +133,19 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
     public C3aOperand visit(SaExpAdd node)
     {
         defaultIn(node);
+        SaExp op1 = node.getOp1();
+        SaExp op2 = node.getOp2();
+        C3aOperand operand1 = null;
+        C3aOperand operand2 = null;
+        if(op1 != null){
+            operand1 = op1.accept(this);
+        }
+        if(op2 != null){
+            operand2 = op2.accept(this);
+        }
+        C3aTemp temp = c3a.newTemp();
+
+        c3a.ajouteInst(new C3aInstAdd(operand1,operand2,temp,""));
         defaultOut(node);
         return null;
     }
@@ -272,5 +261,9 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
         defaultIn(node);
         defaultOut(node);
         return null;
+    }
+
+    public C3a getC3a(){
+        return c3a;
     }
 }
