@@ -98,6 +98,17 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
     public C3aOperand visit(SaInstAffect node)
     {
         defaultIn(node);
+        C3aOperand LHS = null;
+        C3aOperand  RHS= null;
+        //opperation
+        if(node.getLhs() != null){
+            LHS = node.getLhs().accept(this);
+        }
+        //result
+        if(node.getRhs() != null){
+            RHS = node.getRhs().accept(this);
+        }
+        C3aInstAffect affectation = new C3aInstAffect(RHS,LHS,"");
         defaultOut(node);
         return null;
     }
