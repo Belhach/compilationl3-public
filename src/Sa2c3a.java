@@ -1,6 +1,7 @@
 import c3a.*;
 import sa.*;
 import ts.Ts;
+import ts.TsItemVar;
 
 public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
     private C3a c3a;
@@ -67,14 +68,6 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
     }
 
     @Override
-    public C3aOperand visit(SaLInst node)
-    {
-        defaultIn(node);
-        defaultOut(node);
-        return null;
-    }
-
-    @Override
     public C3aOperand visit(SaDecFonc node)
     {
         defaultIn(node);
@@ -82,13 +75,6 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
         return null;
     }
 
-    @Override
-    public C3aOperand visit(SaDecVar node)
-    {
-        defaultIn(node);
-        defaultOut(node);
-        return null;
-    }
 
     @Override
     public C3aOperand visit(SaInstAffect node)
@@ -103,8 +89,9 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
     public C3aOperand visit(SaVarSimple node)
     {
         defaultIn(node);
+        TsItemVar var = node.tsItem;
         defaultOut(node);
-        return null;
+        return new C3aVar(var,null);
     }
 
     @Override
@@ -364,8 +351,13 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
     public C3aOperand visit(SaVarIndicee node)
     {
         defaultIn(node);
+        TsItemVar var = node.tsItem;
+        C3aOperand length = null;
+        if(node.getIndice() != null){
+            length = node.getIndice().accept(this);
+        }
         defaultOut(node);
-        return null;
+        return new C3aVar(var,length);
     }
 
     public C3a getC3a(){
