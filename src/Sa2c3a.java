@@ -1,6 +1,7 @@
 import c3a.*;
 import sa.*;
 import ts.Ts;
+import ts.TsItemFct;
 import ts.TsItemVar;
 
 public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
@@ -80,6 +81,14 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
     public C3aOperand visit(SaDecFonc node)
     {
         defaultIn(node);
+        TsItemFct Fct = node.tsItem;
+
+        C3aInstFBegin fbegin = new C3aInstFBegin(Fct,"");
+        c3a.ajouteInst(fbegin);
+        SaInst corp_fct = Fct.saDecFonc.getCorps();
+        corp_fct.accept(this);
+        C3aInstFEnd fend = new C3aInstFEnd(Fct.identif);
+        c3a.ajouteInst(fend);
         defaultOut(node);
         return null;
     }
