@@ -60,9 +60,18 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
     public C3aOperand visit(SaInstTantQue node)
     {
         defaultIn(node);
-        C3aLabel new_label = c3a.newAutoLabel();
-        c3a.addLabelToNextInst(new_label);
-        //c3a.ajouteInst(new C3aInstJumpIfEqual(,,""));
+        C3aLabel tq_label = c3a.newAutoLabel();
+        C3aLabel out_tq_label = c3a.newAutoLabel();
+        C3aOperand operand = null;
+        if(node.getTest() != null){
+            operand = node.getTest().accept(this);
+        }
+        c3a.ajouteInst(new C3aInstJumpIfEqual(operand,c3a.False,out_tq_label,""));
+        if(node.getFaire() != null){
+            node.getFaire().accept(this);
+            c3a.ajouteInst(new C3aInstJump(tq_label,""));
+        }
+        c3a.addLabelToNextInst(out_tq_label);
         defaultOut(node);
         return null;
     }
@@ -329,6 +338,13 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
         defaultIn(node);
         defaultOut(node);
         return super.visit(node);
+    }
+
+    public C3aOperand visit(SaInstEcriture node)
+    {
+        defaultIn(node);
+        defaultOut(node);
+        return null;
     }
 
 
