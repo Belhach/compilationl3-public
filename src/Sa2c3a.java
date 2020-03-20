@@ -98,13 +98,6 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
         return null;
     }
 
-    @Override
-    public C3aOperand visit(SaLDec node)
-    {
-        defaultIn(node);
-        defaultOut(node);
-        return null;
-    }
 
     @Override
     public C3aOperand visit(SaVarSimple node)
@@ -233,6 +226,7 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
         c3a.ajouteInst(new C3aInstAffect(c3a.True,var_temp,""));
         c3a.ajouteInst(new C3aInstJumpIfLess(operand1,operand2,label,""));
         c3a.ajouteInst(new C3aInstAffect(c3a.False,var_temp,""));
+        c3a.addLabelToNextInst(label);
         defaultOut(node);
         return var_temp;
     }
@@ -256,6 +250,7 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
         c3a.ajouteInst(new C3aInstAffect(c3a.True,var_temp,""));
         c3a.ajouteInst(new C3aInstJumpIfEqual(operand1,operand2,label,""));
         c3a.ajouteInst(new C3aInstAffect(c3a.False,var_temp,""));
+        c3a.addLabelToNextInst(label);
         defaultOut(node);
         return null;
     }
@@ -274,42 +269,20 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
         if(op2 != null) {
             operand2 = op2.accept(this);
         }
-        /*Compliqué*/
-        /*C3aTemp var_temp0 = c3a.newTemp();
-        C3aLabel True_Label = c3a.newAutoLabel();
-        c3a.ajouteInst(new C3aInstAffect(c3a.True,var_temp0,""));
-        c3a.ajouteInst(new C3aInstJumpIfEqual(operand1,c3a.True,True_Label,""));
-        c3a.ajouteInst(new C3aInstAffect(c3a.False,var_temp0,""));
-        c3a.addLabelToNextInst(True_Label);
+        C3aLabel False_label = c3a.newAutoLabel();
+        C3aTemp var_temp = c3a.newTemp();
+        c3a.ajouteInst(new C3aInstJumpIfEqual(operand1,c3a.False,False_label,""));
+        c3a.ajouteInst(new C3aInstJumpIfEqual(operand2,c3a.False,False_label,""));
 
-        C3aTemp var_temp1 = c3a.newTemp();
-        C3aLabel True_Label1 = c3a.newAutoLabel();
-        c3a.ajouteInst(new C3aInstAffect(c3a.True,var_temp1,""));
-        c3a.ajouteInst(new C3aInstJumpIfEqual(operand2,c3a.True,True_Label1,""));
-        c3a.ajouteInst(new C3aInstAffect(c3a.False,var_temp1,""));
-        c3a.addLabelToNextInst(True_Label1);
+        c3a.ajouteInst(new C3aInstAffect(var_temp,c3a.True,""));
+        C3aLabel True_label = c3a.newAutoLabel();
+        c3a.ajouteInst(new C3aInstJump(True_label,""));
 
-        C3aTemp var_temp2 = c3a.newTemp();
-        C3aLabel False_Label = c3a.newAutoLabel();
-        c3a.ajouteInst(new C3aInstAffect(c3a.True,var_temp2,""));
-        c3a.ajouteInst(new C3aInstJumpIfEqual(var_temp1,c3a.False,False_Label,""));
-        c3a.ajouteInst(new C3aInstAffect(c3a.False,var_temp2,""));
-        c3a.addLabelToNextInst(False_Label);
-
-        C3aTemp var_temp3 = c3a.newTemp();
-        C3aLabel False_Label1 = c3a.newAutoLabel();
-        c3a.ajouteInst(new C3aInstJumpIfEqual(var_temp0,c3a.False,False_Label1,""));
-        c3a.ajouteInst(new C3aInstJumpIfEqual(var_temp1,c3a.False,False_Label1,""));
-        c3a.ajouteInst(new C3aInstAffect(c3a.False,var_temp3,""));
-
-        c3a.ajouteInst(new C3aInstAffect(c3a.True,var_temp3,""));
-        C3aLabel True_Label2 = c3a.newAutoLabel();
-        c3a.ajouteInst(new C3aInstJump(True_Label2,""));
-        c3a.addLabelToNextInst(False_Label1);
-        c3a.ajouteInst(new C3aInstAffect(c3a.False,var_temp3,""));
-        c3a.addLabelToNextInst(True_Label2);*/
+        c3a.addLabelToNextInst(False_label);
+        c3a.ajouteInst(new C3aInstAffect(c3a.False,var_temp,""));
+        c3a.addLabelToNextInst(True_label);
         defaultOut(node);
-        return null;
+        return var_temp;
     }
 
 
@@ -321,16 +294,24 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
         SaExp op2 = node.getOp2();
         C3aOperand operand1 = null;
         C3aOperand operand2 = null;
-        C3aTemp var_temp = c3a.newTemp();
-        C3aLabel True_Label = c3a.newAutoLabel();
-        C3aLabel False_Label = c3a.newAutoLabel();
         if(op1 != null){
             operand1 = op1.accept(this);
         }
         if(op2 != null) {
             operand2 = op2.accept(this);
         }
+        C3aLabel False_label = c3a.newAutoLabel();
+        C3aTemp var_temp = c3a.newTemp();
+        c3a.ajouteInst(new C3aInstJumpIfNotEqual(operand1,c3a.False,False_label,""));
+        c3a.ajouteInst(new C3aInstJumpIfNotEqual(operand2,c3a.False,False_label,""));
 
+        c3a.ajouteInst(new C3aInstAffect(var_temp,c3a.True,""));
+        C3aLabel True_label = c3a.newAutoLabel();
+        c3a.ajouteInst(new C3aInstJump(True_label,""));
+
+        c3a.addLabelToNextInst(False_label);
+        c3a.ajouteInst(new C3aInstAffect(c3a.False,var_temp,""));
+        c3a.addLabelToNextInst(True_label);
         defaultOut(node);
         return null;
     }
@@ -339,8 +320,20 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
     public C3aOperand visit(SaExpNot node)
     {
         defaultIn(node);
+        SaExp op1 = node.getOp1();
+        SaExp op2 = node.getOp2();
+        C3aOperand operand = null;
+        C3aTemp var_temp = c3a.newTemp();
+        C3aLabel Label = c3a.newAutoLabel();
+        if(op1 != null){
+            operand = op1.accept(this);
+        }
+        c3a.ajouteInst(new C3aInstAffect(c3a.True,var_temp,""));
+        c3a.ajouteInst(new C3aInstJumpIfEqual(operand,c3a.False,Label,""));
+        c3a.ajouteInst(new C3aInstAffect(c3a.False,var_temp,""));
+        c3a.addLabelToNextInst(Label);
         defaultOut(node);
-        return null;
+        return var_temp;
     }
 
     @Override
@@ -348,16 +341,9 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
     {
         defaultIn(node);
         defaultOut(node);
-        return null;
+        return super.visit(node);
     }
 
-    @Override
-    public C3aOperand visit(SaInstBloc node)
-    {
-        defaultIn(node);
-        defaultOut(node);
-        return null;
-    }
 
     @Override
     public C3aOperand visit(SaInstSi node)
@@ -367,16 +353,7 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
         return null;
     }
 
-    @Override
     public C3aOperand visit(SaInstRetour node)
-    {
-        defaultIn(node);
-        defaultOut(node);
-        return null;
-    }
-
-    @Override
-    public C3aOperand visit(SaLExp node)
     {
         defaultIn(node);
         defaultOut(node);
