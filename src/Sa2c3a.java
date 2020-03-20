@@ -268,21 +268,48 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
         SaExp op2 = node.getOp2();
         C3aOperand operand1 = null;
         C3aOperand operand2 = null;
-        C3aTemp var_temp = c3a.newTemp();
-        C3aLabel True_Label = c3a.newAutoLabel();
-        C3aLabel False_Label = c3a.newAutoLabel();
         if(op1 != null){
             operand1 = op1.accept(this);
         }
         if(op2 != null) {
             operand2 = op2.accept(this);
         }
-        c3a.ajouteInst(new C3aInstAffect(c3a.True,var_temp,""));
+        /*Compliqué*/
+        /*C3aTemp var_temp0 = c3a.newTemp();
+        C3aLabel True_Label = c3a.newAutoLabel();
+        c3a.ajouteInst(new C3aInstAffect(c3a.True,var_temp0,""));
         c3a.ajouteInst(new C3aInstJumpIfEqual(operand1,c3a.True,True_Label,""));
-        c3a.ajouteInst(new C3aInstAffect(c3a.False,var_temp,""));
-        /**/
+        c3a.ajouteInst(new C3aInstAffect(c3a.False,var_temp0,""));
+        c3a.addLabelToNextInst(True_Label);
+
+        C3aTemp var_temp1 = c3a.newTemp();
+        C3aLabel True_Label1 = c3a.newAutoLabel();
+        c3a.ajouteInst(new C3aInstAffect(c3a.True,var_temp1,""));
+        c3a.ajouteInst(new C3aInstJumpIfEqual(operand2,c3a.True,True_Label1,""));
+        c3a.ajouteInst(new C3aInstAffect(c3a.False,var_temp1,""));
+        c3a.addLabelToNextInst(True_Label1);
+
+        C3aTemp var_temp2 = c3a.newTemp();
+        C3aLabel False_Label = c3a.newAutoLabel();
+        c3a.ajouteInst(new C3aInstAffect(c3a.True,var_temp2,""));
+        c3a.ajouteInst(new C3aInstJumpIfEqual(var_temp1,c3a.False,False_Label,""));
+        c3a.ajouteInst(new C3aInstAffect(c3a.False,var_temp2,""));
+        c3a.addLabelToNextInst(False_Label);
+
+        C3aTemp var_temp3 = c3a.newTemp();
+        C3aLabel False_Label1 = c3a.newAutoLabel();
+        c3a.ajouteInst(new C3aInstJumpIfEqual(var_temp0,c3a.False,False_Label1,""));
+        c3a.ajouteInst(new C3aInstJumpIfEqual(var_temp1,c3a.False,False_Label1,""));
+        c3a.ajouteInst(new C3aInstAffect(c3a.False,var_temp3,""));
+
+        c3a.ajouteInst(new C3aInstAffect(c3a.True,var_temp3,""));
+        C3aLabel True_Label2 = c3a.newAutoLabel();
+        c3a.ajouteInst(new C3aInstJump(True_Label2,""));
+        c3a.addLabelToNextInst(False_Label1);
+        c3a.ajouteInst(new C3aInstAffect(c3a.False,var_temp3,""));
+        c3a.addLabelToNextInst(True_Label2);*/
         defaultOut(node);
-        return var_temp;
+        return null;
     }
 
 
@@ -303,7 +330,7 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
         if(op2 != null) {
             operand2 = op2.accept(this);
         }
-        /**/
+
         defaultOut(node);
         return null;
     }
