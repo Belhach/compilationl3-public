@@ -363,6 +363,12 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
     public C3aOperand visit(SaInstEcriture node)
     {
         defaultIn(node);
+        SaExp arg = node.getArg();
+        C3aOperand operand = null;
+        if(arg != null){
+            operand = arg.accept(this);
+        }
+        c3a.ajouteInst(new C3aInstWrite(operand,""));
         defaultOut(node);
         return null;
     }
