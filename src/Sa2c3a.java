@@ -149,8 +149,12 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
     public C3aOperand visit(SaExpAppel node)
     {
         defaultIn(node);
+        C3aOperand operand = null;
+        if(node.getVal() != null){
+            operand = node.getVal().accept(this);
+        }
         defaultOut(node);
-        return null;
+        return operand;
     }
 
     @Override
@@ -282,7 +286,7 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
         c3a.ajouteInst(new C3aInstAffect(c3a.False,var_temp,""));
         c3a.addLabelToNextInst(label);
         defaultOut(node);
-        return null;
+        return var_temp;
     }
 
     @Override
@@ -343,7 +347,7 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
         c3a.ajouteInst(new C3aInstAffect(c3a.False,var_temp,""));
         c3a.addLabelToNextInst(True_label);
         defaultOut(node);
-        return null;
+        return var_temp;
     }
 
     @Override
@@ -387,20 +391,44 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
         return operand;
     }
 
-
     @Override
     public C3aOperand visit(SaInstSi node)
     {
         defaultIn(node);
+        C3aLabel false_label = c3a.newAutoLabel();
+        C3aOperand operand = null;
+        if(node.getTest() != null){
+            operand = node.getTest().accept(this);
+        }
+        c3a.ajouteInst(new C3aInstJumpIfEqual(operand,c3a.False,false_label,""));
+        if(node.getAlors() != null){
+            node.getAlors().accept(this);
+        }
+
+        if(node.getSinon() != null){
+            C3aLabel true_label = c3a.newAutoLabel();
+            c3a.ajouteInst(new C3aInstJump(true_label,""));
+            c3a.addLabelToNextInst(false_label);
+            node.getSinon().accept(this);
+            c3a.addLabelToNextInst(true_label);
+        }
+        else{
+            c3a.addLabelToNextInst(false_label);
+        }
         defaultOut(node);
-        return null;
+        return operand;
     }
 
     public C3aOperand visit(SaInstRetour node)
     {
         defaultIn(node);
+        C3aOperand operand = null;
+        if(node.getVal() != null){
+            operand = node.getVal().accept(this);
+        }
+        c3a.ajouteInst(new C3aInstReturn(operand,""));
         defaultOut(node);
-        return null;
+        return operand;
     }
 
     @Override
