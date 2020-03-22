@@ -9,7 +9,8 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
     private Ts TsTable;
     private int indentation = 0;
 
-    public Sa2c3a(SaNode root,Ts TsTable){
+
+    Sa2c3a(SaNode root,Ts TsTable){
         c3a = new C3a();
         this.TsTable = TsTable;
         root.accept(this);
@@ -109,6 +110,7 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
             RHS = node.getRhs().accept(this);
         }
         C3aInstAffect affectation = new C3aInstAffect(RHS,LHS,"");
+        c3a.ajouteInst(affectation);
         defaultOut(node);
         return null;
     }
@@ -137,12 +139,11 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
                 C3aOperand operand = args.getTete().accept(this);
                 c3a.ajouteInst(new C3aInstParam(operand,""));
                 args_number -= args_number;
-                if(args.getQueue() != null) {
-                    args = args.getQueue();
-                }
+                args = args.getQueue();
             }
         }
         C3aInstCall call = new C3aInstCall(func,var_temp,"");
+        c3a.ajouteInst(call);
         defaultOut(node);
         return var_temp;
     }
@@ -357,10 +358,9 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
     {
         defaultIn(node);
         SaExp op1 = node.getOp1();
-        SaExp op2 = node.getOp2();
-        C3aOperand operand = null;
         C3aTemp var_temp = c3a.newTemp();
         C3aLabel Label = c3a.newAutoLabel();
+        C3aOperand operand = null;
         if(op1 != null){
             operand = op1.accept(this);
         }
