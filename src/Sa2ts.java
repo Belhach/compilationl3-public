@@ -7,14 +7,14 @@ public class Sa2ts extends SaDepthFirstVisitor<Void>{
     private Ts Global_Table ;
     private Ts current_Local_Tables;
 
-    public static final String GLOBAL = "GLOBAL";
-    public static final String PARAMETRE = "PARAMETRE";
-    public static final String VARIABLE = "VARIABLE";
-    public String State;
+    private static final String GLOBAL = "GLOBAL";
+    private static final String PARAMETRE = "PARAMETRE";
+    private static final String VARIABLE = "VARIABLE";
+    private String State;
 
     private int indentation = 0;
 
-    public Sa2ts(SaNode root){
+    Sa2ts(SaNode root){
         Global_Table = new Ts();
         State = GLOBAL;
         root.accept(this);
@@ -147,15 +147,15 @@ public class Sa2ts extends SaDepthFirstVisitor<Void>{
         return null;
     }
 
-    public boolean var_Existe(String nom, Ts table) {
+    private boolean var_Existe(String nom, Ts table) {
         return table.getVar(nom) != null;
     }
 
-    public boolean Fnc_Existe(String nom) {
+    private boolean Fnc_Existe(String nom) {
         return Global_Table.getFct(nom) != null;
     }
 
-    public Ts getTableGlobale() {
+    private Ts getTableGlobale() {
         return Global_Table;
     }
 }

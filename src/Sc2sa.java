@@ -709,7 +709,7 @@ public class Sc2sa extends DepthFirstAdapter {
         outAAppelfct(node);
     }
 
-    public SaNode getRoot(){
+    SaNode getRoot(){
         return this.returnValue;
     }
 }

@@ -1,18 +1,15 @@
 import c3a.*;
 import sa.*;
-import ts.Ts;
 import ts.TsItemFct;
 import ts.TsItemVar;
 
 public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
     private C3a c3a;
-    private Ts TsTable;
     private int indentation = 0;
 
 
-    Sa2c3a(SaNode root,Ts TsTable){
+    Sa2c3a(SaNode root){
         c3a = new C3a();
-        this.TsTable = TsTable;
         root.accept(this);
     }
 
