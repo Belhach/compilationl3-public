@@ -83,7 +83,7 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
         defaultIn(node);
         TsItemFct Fct = node.tsItem;
 
-        C3aInstFBegin fbegin = new C3aInstFBegin(Fct,"");
+        C3aInstFBegin fbegin = new C3aInstFBegin(Fct,"entree fonction");
         c3a.ajouteInst(fbegin);
         SaInst corp_fct = Fct.saDecFonc.getCorps();
         corp_fct.accept(this);
