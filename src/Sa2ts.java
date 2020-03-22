@@ -155,7 +155,7 @@ public class Sa2ts extends SaDepthFirstVisitor<Void>{
         return Global_Table.getFct(nom) != null;
     }
 
-    private Ts getTableGlobale() {
+    Ts getTableGlobale() {
         return Global_Table;
     }
 }
