@@ -137,7 +137,9 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
                 C3aOperand operand = args.getTete().accept(this);
                 c3a.ajouteInst(new C3aInstParam(operand,""));
                 args_number -= args_number;
-                args = args.getQueue();
+                if(args.getQueue() != null) {
+                    args = args.getQueue();
+                }
             }
         }
         C3aInstCall call = new C3aInstCall(func,var_temp,"");
@@ -339,12 +341,12 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
         c3a.ajouteInst(new C3aInstJumpIfNotEqual(operand1,c3a.False,False_label,""));
         c3a.ajouteInst(new C3aInstJumpIfNotEqual(operand2,c3a.False,False_label,""));
 
-        c3a.ajouteInst(new C3aInstAffect(var_temp,c3a.True,""));
+        c3a.ajouteInst(new C3aInstAffect(var_temp,c3a.False,""));
         C3aLabel True_label = c3a.newAutoLabel();
         c3a.ajouteInst(new C3aInstJump(True_label,""));
 
         c3a.addLabelToNextInst(False_label);
-        c3a.ajouteInst(new C3aInstAffect(c3a.False,var_temp,""));
+        c3a.ajouteInst(new C3aInstAffect(c3a.True,var_temp,""));
         c3a.addLabelToNextInst(True_label);
         defaultOut(node);
         return var_temp;
@@ -436,12 +438,12 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
     {
         defaultIn(node);
         TsItemVar var = node.tsItem;
-        C3aOperand length = null;
+        C3aOperand indice = null;
         if(node.getIndice() != null){
-            length = node.getIndice().accept(this);
+            indice = node.getIndice().accept(this);
         }
         defaultOut(node);
-        return new C3aVar(var,length);
+        return new C3aVar(var,indice);
     }
 
     public C3a getC3a(){
