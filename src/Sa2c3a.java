@@ -6,11 +6,13 @@ import ts.TsItemVar;
 
 public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
     private C3a c3a;
+    private Ts tsTable;
     private int indentation = 0;
 
 
     Sa2c3a(SaNode root, Ts table){
         c3a = new C3a();
+        tsTable = table;
         root.accept(this);
     }
 
@@ -39,6 +41,7 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
     {
         defaultIn(node);
         C3aConstant var = new C3aConstant(node.getVal());
+        System.out.print(var);
         defaultOut(node);
         return var;
     }
@@ -107,6 +110,7 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
         if(node.getRhs() != null){
             expr = node.getRhs().accept(this);
         }
+        //System.out.println(expr+ " " +simp_var + "\n");
         C3aInstAffect affectation = new C3aInstAffect(expr,simp_var,"");
         c3a.ajouteInst(affectation);
         defaultOut(node);
@@ -118,9 +122,9 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
     public C3aOperand visit(SaVarSimple node)
     {
         defaultIn(node);
-        TsItemVar var = node.tsItem;
+        node.tsItem = tsTable.getVar(node.getNom());
         defaultOut(node);
-        return new C3aVar(var,null);
+        return new C3aVar(node.tsItem,null);
     }
 
     @Override
@@ -449,5 +453,9 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
 
     public C3a getC3a(){
         return c3a;
+    }
+
+    public C3aEval getVal(){
+        return new C3aEval(c3a,tsTable);
     }
 }

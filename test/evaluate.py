@@ -243,7 +243,7 @@ if __name__ == "__main__" :
   printEvaluationResult(sys.stdout, saEvaluation, useColor)
   printEvaluationResult(sys.stdout, tsEvaluation, useColor)
   printEvaluationResult(sys.stdout, c3a, useColor)
-  printEvaluationResult(sys.stdout, c3aEvaluation, useColor)
+  #printEvaluationResult(sys.stdout, c3aEvaluation, useColor)
   #printEvaluationResult(sys.stdout, nasmEvaluation, useColor)
 ################################################################################
 
