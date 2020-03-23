@@ -41,7 +41,6 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
     {
         defaultIn(node);
         C3aConstant var = new C3aConstant(node.getVal());
-        System.out.print(var);
         defaultOut(node);
         return var;
     }
@@ -110,7 +109,6 @@ public class Sa2c3a extends SaDepthFirstVisitor<C3aOperand> {
         if(node.getRhs() != null){
             expr = node.getRhs().accept(this);
         }
-        //System.out.println(expr+ " " +simp_var + "\n");
         C3aInstAffect affectation = new C3aInstAffect(expr,simp_var,"");
         c3a.ajouteInst(affectation);
         defaultOut(node);
