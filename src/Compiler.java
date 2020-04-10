@@ -50,8 +50,8 @@ public class Compiler
 	    c3a.affiche(baseName);
 
 		System.out.println("[C3A_out]");
-		C3aEval c3a_result = new Sa2c3a(saRoot, table).getVal();
-		c3a.affiche(baseName);
+		C3aEval c3a_Eval = new C3aEval(c3a, table);
+		c3a_Eval.affiche(baseName);
 
 	    /*System.out.println("[NASM]");
 	    Nasm nasm = new C3a2nasm(c3a, table).getNasm();
